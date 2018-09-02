@@ -185,12 +185,18 @@ class Baidudlink(object):
         :return:
         """
         # get the today param
-        today = '52' + datetime.date.today().strftime('%m%d') + '1'
+        try:
+            dater = requests.get('https://jlwz.cn/wapindex-1000-318.html')
+            dater.raise_for_status()
+            dater.encoding = dater.apparent_encoding
+        except:
+            messagebox.showerror(message='获取参数失败')
+
         query = dict()
-        query['jlwzcn'] = today
+        query['jlwzcn'] = re.findall(r'jlwzcn=(.*?)&', dater.text)[0]
         query['url'] = self.getpubliclink()
         url = 'https://jlwz.cn/api/baidu.php?' + urlencode(query)  # 调用了机领网的api
-
+        
         print(url)
 
         try:
